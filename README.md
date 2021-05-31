@@ -11,7 +11,7 @@ The Python script checks for broken or deleted links every 4 hours via the VOE.S
 Please note that the old URLs may be displayed due to a cache plugin.
 
 ## Ubuntu/Debian Installation
-- apt install wget; wget wget https://github.com/Beloria192/voe-sx-wordpress-abuse-replacement-script/raw/main/install.sh;chmod +x ./install.sh;./install.sh
+- apt install wget;wget https://github.com/Beloria192/voe-sx-wordpress-abuse-replacement-script/raw/main/install.sh;chmod +x ./install.sh;./install.sh
 - set your settings: nano ./voe-wordpress-replacement.py
 
 ## Manual execution
