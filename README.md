@@ -10,10 +10,9 @@ The Python script checks for broken or deleted links every 4 hours via the VOE.S
 
 Please note that the old URLs may be displayed due to a cache plugin.
 
-## Ubuntu/Debian Environment Requirements
-- Python 3 (check with python3 -v if it was installed and install it with apt-get install python3 -y if it is not shown)
-- Pip3 (apt install python3-pip)
-- Python package pymysql (pip3 install pymysql)
+## Ubuntu/Debian Installation
+- apt install wget; wget wget https://github.com/Beloria192/voe-sx-wordpress-abuse-replacement-script/raw/main/install.sh;chmod +x ./install.sh;./install.sh
+- set your settings: nano ./voe-wordpress-replacement.py
 
 ## Manual execution
 - /usr/bin/python3 ./voe-wordpress-replacement.py
@@ -21,3 +20,4 @@ Please note that the old URLs may be displayed due to a cache plugin.
 ## Cronjob “At minute 15 past every 4th hour.”
 - crontab -e
 - 15 */4 * * * /usr/bin/python3 /root/voe-wordpress-replacement.py >> /root/voe-wordpress-replacement.log 2>&1
+- every 4 hours is enough, because the messages are usually announced 10 hours in advance.
