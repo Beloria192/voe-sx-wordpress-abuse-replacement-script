@@ -16,7 +16,10 @@ database_host = '127.0.0.1'
 database_database = 'DATABASE_NAME'
 
 # Table name in which the links are located
-database_table = 'wp_postmeta'
+database_table = 'wp_postmeta' # or wp_posts for default wordpress posts
+
+# Table name in which the links are located
+database_table_field = 'meta_value' # or post_content for default wordpress posts
 
 ##########################################
 # (ignore these settings)
@@ -58,11 +61,11 @@ def isDateTimeInFuture(server_date_time, delete_date_time):
         return False
 
 def checkIfOldLinkStillInUse(old_link):
-    if not re.search(r"^(https?:\/\/)?(www\.)?voe\.sx(\/e\/|\/)([A-Za-z0-9]{12})$", old_link):
-        print(bcolors.FAIL + ' - error: new link invalid ' + old_link + bcolors.ENDC)
+    if not re.search(r"^([A-Za-z0-9]{12})$", old_link):
+        print(bcolors.FAIL + ' - error: link code invalid ' + old_link + bcolors.ENDC)
         return False
 
-    cur.execute('select count(*) as counter from ' + database_database + '.' + database_table + ' WHERE INSTR(meta_value, "' + old_link + '") > 0 LIMIT 1;')
+    cur.execute('select count(*) as counter from ' + database_database + '.' + database_table + ' WHERE INSTR(' + database_table_field + ', "' + old_link + '") > 0 LIMIT 1;')
     time.sleep(sleep_seconds_after_database_request)
 
     link_counter = cur.fetchone()
@@ -122,7 +125,8 @@ def replaceOldLinkWithNewOne(old_link, new_link):
         print(bcolors.FAIL + ' - error: new link code invalid ' + new_link + bcolors.ENDC)
         return False
 
-    cur.execute('UPDATE ' + database_database + '.' + database_table + ' SET meta_value = REPLACE(meta_value, "' + old_link + '", "' + new_link + '") WHERE INSTR(meta_value, "' + old_link + '") > 0 limit ' + str(database_max_updates_per_link) + ';')
+    cur.execute('UPDATE ' + database_database + '.' + database_table + ' SET ' + database_table_field + ' = REPLACE(' + database_table_field + ', "' + old_link + '", "' + new_link + '") WHERE INSTR(' + database_table_field + ', "' + old_link + '") > 0 limit ' + str(database_max_updates_per_link) + ';')
+    db.commit()
     time.sleep(sleep_seconds_after_database_request)
     print(bcolors.OKGREEN + ' - Link has been successfully replaced. ' + bcolors.ENDC)
 
@@ -135,13 +139,13 @@ server_time = DMCA_result['server_time']
 
 if(DMCA_links):
     for DMCA_link in DMCA_links:
-        print(' - process ' + DMCA_link['embed_url'])
+        print(' - process ' + DMCA_link['file_code'])
 
         if not (isDateTimeInFuture(server_time, DMCA_link['del_time'])):
             print('')
             continue
 
-        if not (checkIfOldLinkStillInUse(DMCA_link['embed_url'])):
+        if not (checkIfOldLinkStillInUse(DMCA_link['file_code'])):
             print('')
             continue
 
