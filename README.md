@@ -1,23 +1,32 @@
-# Voe.sx WordPress Abuse Replacement Script
-The Python script checks for broken or deleted links every 4 hours via the VOE.SX API. If a URL is broken, the URL will be replaced automatically.
+# Voe.sx MySQL Website Reupload Script/Bot
+###### For simple WordPress blogs & websites that use PHP or Python with MySQL as a database.
+This script (available in both Python and PHP) automatically checks for broken or deleted links using the API.
+If a URL is found to be broken, the script will automatically replace/clone it.
 
-## Procedure
-- Get all deleted files via VOE API
-- Check which files will be deleted in the future and have not yet been deleted
-- Check if the links are still present in the local MySQL database
-- Clone the deleted link via API and replace the old url code with a new url code
-- The links have been successfully replaced
+## How it Works
+1. Retrieve all abused links using the voe.sx API.
+2. Identify files scheduled for deletion in the future.
+3. Check if these links still exist in your local MySQL database.
+4. Clone the deleted link via API and replace the old URL code with a new one.
 
-Please note that the old URLs may be displayed due to a cache plugin.
+**Note**: Cached versions of your website may still display the old URLs due to cache plugins (WP Rocket, LiteSpeed Cache,  ...).
 
-## Ubuntu/Debian Installation
-- apt install wget;wget https://github.com/Beloria192/voe-sx-wordpress-abuse-replacement-script/raw/main/install.sh;chmod +x ./install.sh;./install.sh
-- set your settings: nano ./voe-wordpress-replacement.py
+# PHP Version Installation (simple)
+1. Download the '**voe-replacement.php**' file
+2. Upload the '**voe-replacement.php**' file to your website (e.g. to a subfolder)
+3. Adjust the configuration settings (database details, table, or column) in the script
+4. Run the script by opening the website path, for example: **my-blog.net/tools/voe-replacement.php**
+5. Create a Linux **cron job** or similar to run the script every few hours. This ensures regular checks and updates.
+   e.g. 15 */2 * * * curl -s my-blog.net/tools/voe-replacement.php > /dev/null
 
-## Manual execution
-- /usr/bin/python3 ./voe-wordpress-replacement.py
+# Python Version Installation (expert)
+Run all commands below, sudo permission required:
+1. cd /root
+2. apt update -y
+3. apt install -y wget python3 python3-pip
+4. pip3 install pymysql
+5. wget https://github.com/Beloria192/voe-sx-wordpress-abuse-replacement-script/raw/main/voe-replacement.py
+6. chmod +x ./voe-wordpress-replacement.py
+7. crontab -l | { cat; echo "15 */3 * * * /usr/bin/python3 /root/voe-wordpress-replacement.py >> /root/voe-wordpress-replacement.log 2>&1"; } | crontab -
 
-## Cronjob “At minute 15 past every 4th hour.”
-- crontab -e
-- 15 */4 * * * /usr/bin/python3 /root/voe-wordpress-replacement.py >> /root/voe-wordpress-replacement.log 2>&1
-- every 4 hours is enough, because the messages are usually announced 10 hours in advance.
+Now the script automatically goes through the database every 3 hours at 15 after. Please test it once manually: python3 /root/voe-wordpress-replacement.py
